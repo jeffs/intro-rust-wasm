@@ -3,6 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  import('wasm').then(wasm => {
+    console.log(wasm);
+  });
   return (
     <div className="App">
       <header className="App-header">
