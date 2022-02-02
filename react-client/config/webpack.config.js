@@ -337,6 +337,16 @@ module.exports = function (webpackEnv) {
     module: {
       strictExportPresence: true,
       rules: [
+        { parser: { requireEnsure: false } },
+        { test: /\.wasm$/, // only load Wasm files (ending in .wasm)
+          // only files in our src/ folder
+          include: path.resolve(__dirname, "src"),
+          use: [{
+            // load and use the wasm-loader dictionary
+            loader: require.resolve("wasm-loader"),
+            options: {}
+          }],
+        },
         // Handle node_modules packages that contain sourcemaps
         shouldUseSourceMap && {
           enforce: 'pre',
@@ -551,7 +561,7 @@ module.exports = function (webpackEnv) {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.wasm$/],
               type: 'asset/resource',
             },
             // ** STOP ** Are you adding a new loader?
@@ -749,5 +759,8 @@ module.exports = function (webpackEnv) {
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,
+    experiments: {
+      asyncWebAssembly: true,
+    },
   };
 };
