@@ -2,9 +2,21 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const import_wasm_once_then = function() {
+  let done = false;
+  return function(cb: (a: any) => void) {
+    if (!done) {
+      import('wasm').then(cb);
+      done = true;
+    }
+  };
+}();
+
 function App() {
-  import('wasm').then(wasm => {
+  console.log('render');
+  import_wasm_once_then(wasm => {
     console.log(wasm);
+    console.log(wasm.add_two_ints(3, 4));
   });
   return (
     <div className="App">
